@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://www.gstatic.com/firebasejs/7.2/firebase.js"></script>
+    </head>
+
+    <body>
+        파이어베이스 실시간으로 웹페이지 연동하기 </br>
+        Firebase + Realtime + Web 
+        <p id="demo">A Paragraph.</p>
+        <pre id="object"></pre>    
+        <button type="button" onclick="myFunction()">데이터 쓰기</button>
+
+        <script>
+            // Your web app's Firebase configuration
+            var firebaseConfig = {
+                apiKey: "AIzaSyDW6DoKJfYZWoZUKNp6-Yl_aurTM1pCItw",
+                authDomain: "kiki-esp32test.firebaseapp.com",
+                databaseURL: "https://kiki-esp32test.firebaseio.com",
+                projectId: "kiki-esp32test",
+                storageBucket: "kiki-esp32test.appspot.com",
+                messagingSenderId: "522991584414",
+                appId: "1:522991584414:web:d0bdbd0d74362b6453a78f",
+                measurementId: "G-2DNPL7C9WQ"
+            };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            // firebase.analytics();
+
+            // firebase에서 읽기
+            //일반 데이터 가져 오기
+            // var demo = document.getElementById("demo");         
+            // var dbRef = firebase.database().ref().child("object");
+            // dbRef.on('value',snap => demo.innerHTML = snap.val()); 
+
+
+            //json 형식으로 가져 오기
+            var preObject = document.getElementById("object");   
+            var dbRef = firebase.database().ref().child("object");            
+            dbRef.on('value',snap => {                               
+                preObject.innerText = JSON.stringify(snap.val(),null,3);
+            });
+        </script>
+
+        <script>
+            function myFunction() {
+                document.getElementById("demo").innerHTML = "쓰기를 완료";
+                alert("쓰기 완료");
+                
+                //firebase에 쓰기
+                var dbRefObject = firebase.database().ref();
+                dbRefObject.child("object").set("Some Value");
+            }
+        </script>
+    </body>
+</html>
