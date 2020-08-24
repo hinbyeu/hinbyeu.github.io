@@ -2,17 +2,33 @@
     <head>
         <meta charset="utf-8">
         <script src="https://www.gstatic.com/firebasejs/7.2/firebase.js"></script>
-    </head>
+        <!-- <link rel="stylesheet" href="http://i2r.link/image/html/index.css"> -->
+        <!-- https://www.w3schools.com/css/css3_buttons.asp 참조 -->
 
+        <style>
+             .button {
+            border: none;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            }
+            .button-on {border-radius: 100%; background-color: #4CAF50;}
+            .button-off {border-radius: 100%;background-color: #707070;}
+          </style>
+    </head>
     <body>
-        파이어베이스 실시간으로 웹페이지 연동하기 </br>
-        Firebase + Realtime + Web 
+        파이어베이스 실시간으로 웹과 ESP8266 연동하기 </br>
+        Firebase + Realtime + Web + ESP8266(D1 mini)
         <p id="demo">A Paragraph.</p>
-        <pre id="object"></pre>    
-        <button type="button" onclick="myFunction()">데이터 쓰기</button>
+        <pre id="object"></pre>
 
         <script>
-            // Your web app's Firebase configuration
+            <!--WebTest02-->
             var firebaseConfig = {
                 apiKey: "AIzaSyDW6DoKJfYZWoZUKNp6-Yl_aurTM1pCItw",
                 authDomain: "kiki-esp32test.firebaseapp.com",
@@ -25,31 +41,37 @@
             };
             // Initialize Firebase
             firebase.initializeApp(firebaseConfig);
-            // firebase.analytics();
-
-            // firebase에서 읽기
-            //일반 데이터 가져 오기
-            // var demo = document.getElementById("demo");         
-            // var dbRef = firebase.database().ref().child("object");
-            // dbRef.on('value',snap => demo.innerHTML = snap.val()); 
-
-
-            //json 형식으로 가져 오기
-            var preObject = document.getElementById("object");   
-            var dbRef = firebase.database().ref().child("object");            
-            dbRef.on('value',snap => {                               
-                preObject.innerText = JSON.stringify(snap.val(),null,3);
-            });
         </script>
 
-        <script>
+         <script>
+            // firebase에서 읽기
+            var preObject = document.getElementById("object");
+            var dbRef = firebase.database().ref().child("object");
+            var power;
+        
+            dbRef.on('value',snap => {
+                power=snap.val();
+                preObject.innerText=JSON.stringify(power);
+                //alert(JSON.stringify(power.name)+"의 상태 "+JSON.stringify(power.on));
+
+                var demo = document.getElementById("demo");
+
+                if(power.on == "on")
+                    demo.innerHTML="<button id=\"button01\" class=\"button button-on\" onclick=\"myFunction()\">";
+                else
+                    demo.innerHTML="<button id=\"button01\" class=\"button button-off\" onclick=\"myFunction()\">";
+            });
+
             function myFunction() {
-                document.getElementById("demo").innerHTML = "쓰기를 완료";
-                alert("쓰기 완료");
+                var button01 = document.getElementById("button01");
+
+                if(power.on == "on") power.on = "off";
+                else if(power.on == "off") power.on = "on";
                 
                 //firebase에 쓰기
                 var dbRefObject = firebase.database().ref();
-                dbRefObject.child("object").set("Some Value");
+                dbRefObject.child("object/on").set(power.on);
+                //alert("쓰기 완료");
             }
         </script>
     </body>
